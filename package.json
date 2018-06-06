@@ -1,0 +1,20 @@
+{
+  "name": "videojs-vast-vpaid-waterfall",
+  "version": "1.0.0",
+  "description": "Allows for VAST and VPAID preroll, midroll, and postroll ads with fallback",
+  "main": "src/videojs-vast-vpaid-waterfall.js",
+  "keywords": [
+    "ads",
+    "vast",
+    "videojs",
+    "videojs-plugin",
+	"vpaid"
+  ],
+  "author": "DoomTay",
+  "license": "MIT",
+  "files": [
+    "index.html",
+    "src/"
+  ],
+  "dependencies": {}
+}

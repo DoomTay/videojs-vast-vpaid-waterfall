@@ -1,0 +1,21 @@
+.vjs-midroll-marker
+{
+	width: 5px;
+	height: 100%;
+	background-color: white;
+	position: absolute;
+}
+
+.vjs-ad-playing .vjs-midroll-marker
+{
+	display: none;
+}
+
+.vjs-ad-playing .vjs-vpaid-wrapper
+{
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+}
