@@ -127,7 +127,7 @@
 			player.one("adended",function()
 			{
 				vastTracker.complete();
-				vastTracker.close();
+				vastTracker = null;
 				skipButton.removeEventListener("click", skipAd);
 				vpaidContainer.removeEventListener('click', trackerClick);
 				player.off('adtimeupdate', trackProgress);
