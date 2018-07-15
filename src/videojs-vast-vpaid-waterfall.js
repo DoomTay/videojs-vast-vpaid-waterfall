@@ -106,40 +106,66 @@
 			vastTracker.load();
 
 			vpaidContainer.addEventListener('click', trackerClick);
-
+			
 			vastTracker.on('clickthrough', clickThrough);
-
-			player.on('adtimeupdate', function () {
-				vastTracker.setProgress(player.currentTime());
-			});
-
-			player.on('advolumechange', function () {
-				vastTracker.setMuted(player.muted());
-			});
-
-			player.on('adpause', function () {
-				vastTracker.setPaused(true);
-			});
-
-			player.on('adplay', function () {
-				vastTracker.setPaused(false);
-			});
-
+			
+			player.on('adtimeupdate', trackProgress);
+			player.on('advolumechange', trackerVolumeChange);
+			player.on('adpause', trackerPause);
+			player.on('adplay', trackerPlay);
 			player.on('fullscreenchange', trackerFullscreenCheck);
-		}
+			
+			player.one("adended",function()
+			{
+				vastTracker.complete();
+				vastTracker.close();
+				vpaidContainer.removeEventListener('click', trackerClick);
+				player.off('adtimeupdate', trackProgress);
+				player.off('advolumechange', trackerVolumeChange);
+				player.off('adpause', trackerPause);
+				player.off('adplay', trackerPlay);
+				player.off('fullscreenchange', trackerFullscreenCheck);
+			})
+			
+			function trackProgress()
+			{
+				vastTracker.setProgress(player.currentTime());
+			}
+			
+			function trackerVolumeChange()
+			{
+				vastTracker.setMuted(player.muted());
+			}
+			
+			function trackerPause()
+			{
+				vastTracker.setPaused(true);
+			}
+			
+			function trackerPlay()
+			{
+				vastTracker.setPaused(false);
+			}
+			
+			function trackerClick() {
+				vastTracker.click();
+			}
+			
+			function skipAd()
+			{
+				if(vastTracker) vastTracker.skip();
+				player.trigger("adended");
+			}
 
-		function trackerClick() {
-			vastTracker.click();
-		}
+			function clickThrough(url)
+			{
+				window.open(url);
+			}
 
-		function clickThrough(url)
-		{
-			window.open(url);
-		}
-
-		function trackerFullscreenCheck()
-		{
-			vastTracker.setFullscreen(player.isFullscreen());
+			function trackerFullscreenCheck()
+			{
+				vastTracker.setFullscreen(player.isFullscreen());
+			}
 		}
 
 		function prepareAds(type)
@@ -446,14 +472,6 @@
 				//The pod has successfully played an ad. Let's move to the next one and reset the position
 				podIndex++;
 				waterfallIndex = 0;
-
-				if(vastTracker)
-				{
-					vastTracker.complete();
-					vastTracker.close();
-				}
-				vpaidContainer.removeEventListener('click', trackerClick);
-				player.off('fullscreenchange', trackerFullscreenCheck);
 
 				if(podIndex == pod.length)
 				{
