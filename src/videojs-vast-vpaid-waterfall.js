@@ -199,6 +199,14 @@
 														alternateFiles = true;
 														break;
 													}
+													else if(mediaFile.mimeType == "video/mp4")
+													{
+														adSource.push({
+															type: mediaFile.mimeType,
+															src: mediaFile.fileURL
+														});
+														continue;
+													}
 													else if(mediaFile.mimeType == "application/javascript")
 													{
 														debugLog("Playing", currentAd);
@@ -389,6 +397,7 @@
 
 						function initAd(err, result) {
 							var initialDimensions = getPlayerDimensions();
+
 							adUnit.initAd(initialDimensions.width, initialDimensions.height, 'normal', mediaFile.bitRate, {AdParameters: creative.adParameters}, '', function (err) {
 								player.trigger('ads-ad-started');
 								player.controlBar.hide();
