@@ -326,6 +326,7 @@
 					var mediaFile = creative.mediaFiles[0];
 
 					player.pause();
+					player.controlBar.hide();
 
 					vpaid.loadAdUnit(mediaFile.fileURL, onLoad);
 
@@ -334,6 +335,7 @@
 						if(err)
 						{
 							console.error(err);
+							player.controlBar.show();
 							player.trigger("aderror");
 							return;
 						}
@@ -359,7 +361,6 @@
 						function onStart()
 						{
 							player.trigger('ads-ad-started');
-							player.controlBar.hide();
 							player.on("resize",resizeAd);
 							window.addEventListener("resize",resizeAd);
 						}
@@ -388,7 +389,8 @@
 					var flashVPaid = new VPAIDFLASHClient(vpaidContainer, flashWrapperLoaded,{data: options.flashWrapperPath});
 
 					var mediaFile = creative.mediaFiles[0];
-
+					
+					player.controlBar.hide();
 					player.pause();
 
 					function flashWrapperLoaded(error, result)
@@ -396,10 +398,11 @@
 						if(error)
 						{
 							console.error(error);
+							player.controlBar.show();
 							player.trigger("aderror");
 							return;
 						}
-
+												
 						flashVPaid.loadAdUnit(mediaFile.fileURL, runFlashAdUnit);
 					}
 
@@ -411,24 +414,18 @@
 							player.trigger("aderror");
 							return;
 						}
-
+						
 						adUnit.handshakeVersion('2.0', initAd);
 						adUnit.on('AdLoaded', startAd);
 
 						adUnit.on('AdStopped', function (err, result) {
-							flashVPaid.destroy();
-							player.controlBar.show();
-							player.off("resize",resizeAd);
-							window.removeEventListener("resize",resizeAd);
+							cleanUp();
 							player.trigger("adended");
 						});
 
 						adUnit.on('AdError', function (err, result) {
 							console.error(err);
-							flashVPaid.destroy();
-							player.controlBar.show();
-							player.off("resize",resizeAd);
-							window.removeEventListener("resize",resizeAd);
+							cleanUp();
 							player.trigger("aderror");
 						});
 
@@ -436,21 +433,30 @@
 							checkAdProperties();
 						});
 
-						function initAd(err, result) {
+						function initAd(err, result)
+						{
 							var initialDimensions = getPlayerDimensions();
 
 							adUnit.initAd(initialDimensions.width, initialDimensions.height, 'normal', mediaFile.bitRate, {AdParameters: creative.adParameters}, '', function (err) {
 								player.trigger('ads-ad-started');
-								player.controlBar.hide();
 								player.on("resize",resizeAd);
 								window.addEventListener("resize",resizeAd);
 							});
 						}
-
-						function startAd(err, result) {
-							adUnit.startAd();
+						
+						function cleanUp()
+						{
+							flashVPaid.destroy();
+							player.controlBar.show();
+							player.off("resize",resizeAd);
+							window.removeEventListener("resize",resizeAd);
 						}
 
+						function startAd(err, result)
+						{
+							adUnit.startAd();
+						}
+						
 						function checkAdProperties() {
 							adUnit.getAdIcons();
 							adUnit.setAdVolume(player.volume());
