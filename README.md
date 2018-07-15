@@ -16,7 +16,7 @@ You will need video.js, as well as
 * [SWFObject](https://github.com/swfobject/swfobject)
 * [VPAIDFLASHClient](https://github.com/MailOnline/VPAIDFLASHClient) *
 
-\* Version must be no later than 0.1.9, as later versions will [inexplicably fail](MailOnline/VPAIDFLASHClient#23)
+\* Version must be no later than 0.1.9, as later versions will [inexplicably fail](https://github.com/MailOnline/VPAIDFLASHClient/issues/23)
 
 ```html
 <script src="//path/to/video.min.js"></script>
@@ -77,6 +77,9 @@ Adds markers to indicate when midroll markers will happen. Defaults to `true`. M
 
 ### debug
 Prints debug messages. Defaults to `false`
+
+### skipDelay
+Overrides any skip delay defined in the ad. Will cause a "skip" button to appear after `n` seconds
 
 ### flashWrapperPath
 Points to the file that will serve as the wrapper for VPAID Flash ads. Defaults to `/VPAIDFlash.swf`

@@ -19,3 +19,15 @@
 	width: 100%;
 	height: 100%;
 }
+
+.vjs-skip-button
+{
+	position: absolute;
+	z-index: 2;
+	cursor: pointer;
+	padding: 10px;
+	background: black;
+	right: 0;
+	font-size: 16px;
+	top: 75%;
+}

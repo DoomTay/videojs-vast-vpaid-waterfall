@@ -28,7 +28,13 @@
 		var vpaidContainer = document.createElement("div");
 		vpaidContainer.className = "vjs-vpaid-wrapper";
 		player.el().insertBefore(vpaidContainer, player.controlBar.el());
-
+		
+		var skipButton = document.createElement("div");
+		skipButton.className = "vjs-skip-button";
+		skipButton.innerText = "Skip this ad";
+		skipButton.style.display = "none";
+		player.el().insertBefore(skipButton, player.controlBar.el());
+		
 		var vastTracker;
 
 		if (!player.ads) return;
@@ -103,10 +109,13 @@
 
 		function initTracker(ad, creative) {
 			vastTracker = new DMVAST.tracker(ad, creative);
+			if(options.skipDelay) vastTracker.setSkipDelay(options.skipDelay);
 			vastTracker.load();
 
 			vpaidContainer.addEventListener('click', trackerClick);
 			
+			skipButton.addEventListener("click", skipAd);
+
 			vastTracker.on('clickthrough', clickThrough);
 			
 			player.on('adtimeupdate', trackProgress);
@@ -119,6 +128,7 @@
 			{
 				vastTracker.complete();
 				vastTracker.close();
+				skipButton.removeEventListener("click", skipAd);
 				vpaidContainer.removeEventListener('click', trackerClick);
 				player.off('adtimeupdate', trackProgress);
 				player.off('advolumechange', trackerVolumeChange);
@@ -130,6 +140,11 @@
 			function trackProgress()
 			{
 				vastTracker.setProgress(player.currentTime());
+				
+				if(vastTracker.skipable && skipButton.style.display == "none")
+				{
+					skipButton.style.display = "";
+				}
 			}
 			
 			function trackerVolumeChange()
@@ -472,6 +487,8 @@
 				//The pod has successfully played an ad. Let's move to the next one and reset the position
 				podIndex++;
 				waterfallIndex = 0;
+				
+				skipButton.style.display = "none";
 
 				if(podIndex == pod.length)
 				{
