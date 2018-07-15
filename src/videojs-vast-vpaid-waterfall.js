@@ -127,7 +127,7 @@
 			player.one("adended",function()
 			{
 				vastTracker.complete();
-				vastTracker.close();
+				vastTracker = null;
 				skipButton.removeEventListener("click", skipAd);
 				vpaidContainer.removeEventListener('click', trackerClick);
 				player.off('adtimeupdate', trackProgress);
@@ -251,7 +251,7 @@
 													else if(mediaFile.mimeType == "application/javascript")
 													{
 														debugLog("Playing", currentAd);
-														loadJSAdUnit(creative);
+														loadJSAdUnit(ads[a],creative);
 														alternateFiles = true;
 														break;
 													}
@@ -319,7 +319,7 @@
 					return {width: width, height: height};
 				}
 
-				function loadJSAdUnit(creative)
+				function loadJSAdUnit(ad,creative)
 				{
 					var vpaid = new VPAIDHTML5Client(vpaidContainer, techScreen, {});
 
@@ -343,13 +343,68 @@
 						adUnit.subscribe('AdLoaded', onInit);
 						adUnit.subscribe('AdStarted', onStart);
 						adUnit.subscribe('AdStopped', wrapUp);
-
+						adUnit.subscribe('AdVideoFirstQuartile', function()
+						{
+							adUnit.getAdDuration(function(err,duration)
+							{
+								if(vastTracker) vastTracker.setProgress(duration * 0.25);
+							})
+						});
+						adUnit.subscribe('AdVideoMidpoint', function()
+						{
+							adUnit.getAdDuration(function(err,duration)
+							{
+								if(vastTracker) vastTracker.setProgress(duration * 0.5);
+							})
+						});
+						adUnit.subscribe('AdVolumeChange', function(err,result)
+						{
+							adUnit.getAdVolume(function(err,volume)
+							{
+								if(vastTracker) vastTracker.setMuted(volume == 0);
+							})
+						})
+						adUnit.subscribe('AdSkipped', function()
+						{
+							if(vastTracker) vastTracker.skip();
+						})
+						adUnit.subscribe('AdVideoComplete', function()
+						{
+							if(vastTracker)
+							{
+								vastTracker.complete();
+								vastTracker = null;
+							}
+						})
+						adUnit.subscribe('AdClickThru', function()
+						{
+							if(vastTracker) vastTracker.click();
+						})
+						adUnit.subscribe('AdPlaying', function()
+						{
+							if(vastTracker) vastTracker.setPaused(false);
+						})
+						adUnit.subscribe('AdPaused', function()
+						{
+							if(vastTracker) vastTracker.setPaused(true);
+						})
+						
 						adUnit.handshakeVersion('2.0', onHandShake);
-
+						
 						function onHandShake(error, result)
 						{
 							var initialDimensions = getPlayerDimensions();
-
+							
+							vastTracker = new DMVAST.tracker(ad, creative);
+							vastTracker.load();
+							
+							vastTracker.on('clickthrough', clickThrough);
+							
+							function clickThrough(url)
+							{
+								window.open(url);
+							}
+							
 							adUnit.initAd(initialDimensions.width, initialDimensions.height, 'normal', -1, {AdParameters: creative.adParameters}, {});
 						}
 
@@ -357,7 +412,7 @@
 						{
 							adUnit.startAd();
 						}
-
+						
 						function onStart()
 						{
 							player.trigger('ads-ad-started');
@@ -368,8 +423,8 @@
 						function wrapUp()
 						{
 							vpaid.destroy();
-							player.controlBar.show();
 							player.off("resize",resizeAd);
+							player.controlBar.show();
 							window.removeEventListener("resize",resizeAd);
 							player.trigger("adended");
 						}
