@@ -27,13 +27,12 @@ You will need video.js, as well as
 <script src="//path/to/videojs-contrib-ads.js"></script>
 <script src="//path/to/videojs-vast-vpaid-waterfall.js"></script>
 <script>
-	var player = videojs('my-video');
+	var player = videojs("my-video");
 
 	player.vastWaterfall({
 		preroll:
 		[
 			{
-				time: 0,
 				ads: ["https://www.adserver.com/preroll/default/...",
 				"https://www.adserver.com/preroll/backup1/...",
 				"https://www.adserver.com/preroll/backup2/...",
@@ -60,7 +59,6 @@ You will need video.js, as well as
 		postroll:
 		[
 			{
-				time: 0,
 				ads: ["https://www.adserver.com/postroll/default/...",
 				"https://www.adserver.com/postroll/backup1/...",
 				"https://www.adserver.com/postroll/backup2/...",

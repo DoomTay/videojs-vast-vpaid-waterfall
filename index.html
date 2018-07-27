@@ -11,7 +11,7 @@
 </head>
 <body>
 	<video id="videojs-vast-vpaid-waterfall-player" class="video-js vjs-default-skin" autoplay controls width="640" height="360">
-	<source src="http://184.72.239.149/vod/smil:BigBuckBunny.smil/playlist.m3u8" type='application/x-mpegURL'>
+	<source src="http://184.72.239.149/vod/smil:BigBuckBunny.smil/playlist.m3u8" type="application/x-mpegURL">
 	</video>
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.0.5/video.min.js"></script>
@@ -22,7 +22,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-ads/6.3.0/videojs-contrib-ads.js"></script>
 	<script src="src/videojs-vast-vpaid-waterfall.js"></script>
 	<script>
-	var player = window.player = videojs('videojs-vast-vpaid-waterfall-player');
+	var player = window.player = videojs("videojs-vast-vpaid-waterfall-player");
 	
 	player.play();
 	
@@ -30,7 +30,6 @@
 		preroll:
 		[
 			{
-				time: 0,
 				ads: ["https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml","https://cdn.rawgit.com/InteractiveAdvertisingBureau/VAST_Samples/dc7b176c27239e00dd1cefc5c8ba74ee3aec4e08/VAST%201-2.0%20Samples/Inline_LinearRegular_VAST2.0.xml"]
 			}
 		],
@@ -48,7 +47,6 @@
 		postroll:
 		[
 			{
-				time: 0,
 				ads: ["https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml"]
 			}
 		],
