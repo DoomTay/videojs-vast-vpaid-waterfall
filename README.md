@@ -164,6 +164,19 @@ require(['video.js', 'videojs-vast-vpaid-waterfall'], function(videojs) {
 });
 ```
 
+## Other options
+### markers
+Adds markers to indicate when midroll markers will happen. Defaults to `true`. Markers will have the class `vjs-midroll-marker`, so their appearance can be customized with CSS.
+
+### debug
+Prints debug messages. Defaults to `false`
+
+### skipDelay
+Overrides any skip delay defined in the ad. Will cause a "skip" button to appear after `n` seconds
+
+### flashWrapperPath
+Points to the file that will serve as the wrapper for VPAID Flash ads. Defaults to `/VPAIDFlash.swf`
+
 ## License
 
 MIT. Copyright (c) DoomTay

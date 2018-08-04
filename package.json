@@ -23,7 +23,10 @@
   ],
   "dependencies": {
     "global": "^4.3.2",
-    "video.js": "^5.19.2 || ^6.6.0"
+    "vast-client": "<=1.8.2",
+    "video.js": "^5.19.2 || ^6.6.0",
+    "videojs-contrib-ads": "^6.4.3",
+    "vpaid-flash-client": "<=0.1.9"
   },
   "module": "dist/videojs-vast-vpaid-waterfall.es.js",
   "generator-videojs-plugin": {
@@ -32,6 +35,9 @@
   "scripts": {
     "prebuild": "npm run clean",
     "build": "npm-run-all -p build:*",
+    "build:css": "npm-run-all build:css:sass build:css:bannerize",
+    "build:css:bannerize": "bannerize dist/videojs-vast-vpaid-waterfall.css --banner=scripts/banner.ejs",
+    "build:css:sass": "node-sass src/videojs-vast-vpaid-waterfall.css dist/videojs-vast-vpaid-waterfall.css --output-style=compressed --linefeed=lf",
     "build:js": "npm-run-all build:js:rollup-modules build:js:rollup-umd build:js:bannerize build:js:uglify",
     "build:js:bannerize": "bannerize dist/videojs-vast-vpaid-waterfall.js --banner=scripts/banner.ejs",
     "build:js:rollup-modules": "rollup -c scripts/modules.rollup.config.js",
@@ -48,6 +54,8 @@
     "preversion": "npm test",
     "version": "node scripts/version.js",
     "watch": "npm-run-all -p watch:*",
+    "watch:css": "npm-run-all build:css:sass watch:css:sass",
+    "watch:css:sass": "node-sass src/videojs-vast-vpaid-waterfall.css dist/videojs-vast-vpaid-waterfall.css --output-style=compressed --linefeed=lf --watch src/**/*.scss",
     "watch:js-modules": "rollup -c scripts/modules.rollup.config.js -w",
     "watch:js-umd": "rollup -c scripts/umd.rollup.config.js -w",
     "watch:test": "rollup -c scripts/test.rollup.config.js -w",
@@ -77,6 +85,7 @@
     "karma-qunit": "^1.2.1",
     "karma-safari-launcher": "^1.0.0",
     "mkdirp": "^0.5.1",
+    "node-sass": "4.5.3",
     "node-static": "^0.7.10",
     "npm-run-all": "^4.1.2",
     "portscanner": "^2.1.1",
@@ -91,6 +100,7 @@
     "rollup-watch": "^3.2.2",
     "semver": "^5.4.1",
     "sinon": "^2.4.1",
-    "uglify-js": "^3.3.5"
+    "uglify-js": "^3.3.5",
+    "videojs-standard": "^6.0.1"
   }
 }

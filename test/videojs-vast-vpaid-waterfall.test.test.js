@@ -4,7 +4,7 @@ import QUnit from 'qunit';
 import sinon from 'sinon';
 import videojs from 'video.js';
 
-import plugin from '../src/plugin';
+import plugin from '../src/videojs-vast-vpaid-waterfall';
 
 const Player = videojs.getComponent('Player');
 

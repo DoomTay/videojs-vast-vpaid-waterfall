@@ -11,7 +11,7 @@ import resolve from 'rollup-plugin-node-resolve';
 
 export default {
   name: 'videojsVastVpaidWaterfall',
-  input: 'src/plugin.js',
+  input: 'src/videojs-vast-vpaid-waterfall.js',
   output: {
     file: 'dist/videojs-vast-vpaid-waterfall.js',
     format: 'umd'

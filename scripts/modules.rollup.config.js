@@ -10,7 +10,7 @@ import json from 'rollup-plugin-json';
 
 export default {
   name: 'videojsVastVpaidWaterfall',
-  input: 'src/plugin.js',
+  input: 'src/videojs-vast-vpaid-waterfall.js',
   output: [{
     file: 'dist/videojs-vast-vpaid-waterfall.cjs.js',
     format: 'cjs'
@@ -25,7 +25,8 @@ export default {
     'video.js'
   ],
   globals: {
-    'video.js': 'videojs'
+    'video.js': 'videojs',
+	'vast-client': 'vast-client'
   },
   plugins: [
     json(),

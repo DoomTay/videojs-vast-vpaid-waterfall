@@ -4,12 +4,14 @@
   <meta charset="utf-8">
   <title>videojs-vast-vpaid-waterfall Demo</title>
   <link href="node_modules/video.js/dist/video-js.css" rel="stylesheet">
+  <link href="node_modules/videojs-contrib-ads/dist/videojs-contrib-ads.css" rel="stylesheet">
+  <link href="dist/videojs-vast-vpaid-waterfall.css" rel="stylesheet">
   
 </head>
 <body>
   <video id="videojs-vast-vpaid-waterfall-player" class="video-js vjs-default-skin" controls>
-    <source src="//vjs.zencdn.net/v/oceans.mp4" type='video/mp4'>
-    <source src="//vjs.zencdn.net/v/oceans.webm" type='video/webm'>
+    <source src="https://vjs.zencdn.net/v/oceans.mp4" type='video/mp4'>
+    <source src="https://vjs.zencdn.net/v/oceans.webm" type='video/webm'>
   </video>
   <ul>
     <li><a href="test/">Run unit tests in browser.</a></li>
@@ -17,7 +19,8 @@
   </ul>
   
   <script src="node_modules/video.js/dist/video.js"></script>
-  <script src="dist/videojs-vast-vpaid-waterfall.js"></script>
+  <script src="node_modules/videojs-contrib-ads/dist/videojs-contrib-ads.js"></script>
+  <script src="dist/videojs-vast-vpaid-waterfall.min.js"></script>
   <script>
 	var player = window.player = videojs("videojs-vast-vpaid-waterfall-player");
 	
@@ -33,11 +36,11 @@
 		midroll:
 		[
 			{
-				time: 223,
+				time: 23,
 				ads: ["http://search.spotxchange.com/vast/2.00/79391?VPAID=1&content_page_url=test.com&cb=3202405928168446&player_width=300&player_height=250","https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml"]
 			},
 			{
-				time: 223,
+				time: 23,
 				ads: ["https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml"]
 			}
 		],

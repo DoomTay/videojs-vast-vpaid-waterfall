@@ -1,4 +1,7 @@
 import videojs from 'video.js';
+import DMVAST from 'vast-client';
+import VPAIDFLASHClient from 'vpaid-flash-client';
+import VPAIDHTML5Client from 'vpaid-html5-client';
 import {version as VERSION} from '../package.json';
 
 var defaults = {
@@ -306,8 +309,8 @@ var vastWaterfall = function vastWaterfall(options)
 
 			function getPlayerDimensions()
 			{
-				var width = player.width();
-				var height = player.height();
+				var width = player.width() || player.el().offsetWidth;
+				var height = player.height() || player.el().offsetHeight;
 
 				if(player.isFullscreen())
 				{

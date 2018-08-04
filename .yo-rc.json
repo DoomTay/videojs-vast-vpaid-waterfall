@@ -5,7 +5,7 @@
     "description": "Allows for VAST and VPAID preroll, midroll, and postroll ads with fallback",
     "author": "DoomTay",
     "license": "mit",
-    "sass": false,
+    "sass": true,
     "ie8": false,
     "docs": false,
     "lang": false,
