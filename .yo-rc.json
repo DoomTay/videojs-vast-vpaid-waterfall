@@ -1,0 +1,14 @@
+{
+  "generator-videojs-plugin": {
+    "scope": "",
+    "name": "vast-vpaid-waterfall",
+    "description": "Allows for VAST and VPAID preroll, midroll, and postroll ads with fallback",
+    "author": "DoomTay",
+    "license": "mit",
+    "sass": false,
+    "ie8": false,
+    "docs": false,
+    "lang": false,
+    "husky": "none"
+  }
+}
