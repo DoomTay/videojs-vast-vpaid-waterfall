@@ -23,10 +23,12 @@
   ],
   "dependencies": {
     "global": "^4.3.2",
+    "swfobject": "^2.2.1",
     "vast-client": "<=1.8.2",
     "video.js": "^5.19.2 || ^6.6.0",
     "videojs-contrib-ads": "^6.4.3",
-    "vpaid-flash-client": "<=0.1.9"
+    "vpaid-flash-client": "<=0.1.9",
+    "vpaid-html5-client": "^0.1.14"
   },
   "module": "dist/videojs-vast-vpaid-waterfall.es.js",
   "generator-videojs-plugin": {
