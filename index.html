@@ -15,7 +15,7 @@
 	</video>
 	
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/video.js/7.0.5/video.min.js"></script>
-	<script src="https://unpkg.com/vast-client@1.8.3/vast-client.js"></script>
+	<script src="https://unpkg.com/vast-client@2.0.2/dist/vast-client.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/swfobject/2.2/swfobject.js"></script>
 	<script src="https://unpkg.com/vpaid-html5-client@0.1.14/bin/VPAIDHTML5Client.js"></script>
 	<script src="https://unpkg.com/vpaid-flash-client@0.1.9/bin/VPAIDFLASHClient.js"></script>
@@ -30,27 +30,26 @@
 		preroll:
 		[
 			{
-				ads: ["https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml","https://cdn.rawgit.com/InteractiveAdvertisingBureau/VAST_Samples/dc7b176c27239e00dd1cefc5c8ba74ee3aec4e08/VAST%201-2.0%20Samples/Inline_LinearRegular_VAST2.0.xml"]
+				ads: ["https://cdn.rawgit.com/InteractiveAdvertisingBureau/VAST_Samples/63c9745d9267fe9da64ceaa180bf86be523ef3c3/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml","https://cdn.rawgit.com/InteractiveAdvertisingBureau/VAST_Samples/dc7b176c27239e00dd1cefc5c8ba74ee3aec4e08/VAST%201-2.0%20Samples/Inline_LinearRegular_VAST2.0.xml"]
 			}
 		],
 		midroll:
 		[
 			{
 				time: 223,
-				ads: ["http://search.spotxchange.com/vast/2.00/79391?VPAID=1&content_page_url=test.com&cb=3202405928168446&player_width=300&player_height=250","https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml"]
+				ads: ["http://search.spotxchange.com/vast/2.00/79391?VPAID=1&content_page_url=test.com&cb=3202405928168446&player_width=300&player_height=250","https://cdn.rawgit.com/InteractiveAdvertisingBureau/VAST_Samples/63c9745d9267fe9da64ceaa180bf86be523ef3c3/VAST%201-2.0%20Samples/Inline_LinearRegular_VAST2.0.xml"]
 			},
 			{
 				time: 223,
-				ads: ["https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml"]
+				ads: ["https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dskippablelinear&correlator="]
 			}
 		],
 		postroll:
 		[
 			{
-				ads: ["https://raw.githubusercontent.com/InteractiveAdvertisingBureau/VAST_Samples/master/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml"]
+				ads: ["https://cdn.rawgit.com/InteractiveAdvertisingBureau/VAST_Samples/63c9745d9267fe9da64ceaa180bf86be523ef3c3/VAST%201-2.0%20Samples/Inline_LinearVAST2vpaid.xml"]
 			}
 		],
-		skipDelay: 2,
 		flashWrapperPath: "https://unpkg.com/vpaid-flash-client@0.1.9/bin/VPAIDFlash.swf",
 		debug: true
 	});

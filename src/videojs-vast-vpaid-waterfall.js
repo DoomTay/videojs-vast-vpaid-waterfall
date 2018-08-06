@@ -1,4 +1,4 @@
-(function (videojs)
+(function(videojs)
 {
 	'use strict';
 
@@ -35,37 +35,28 @@
 		skipButton.style.display = "none";
 		player.el().insertBefore(skipButton, player.controlBar.el());
 		
+		var vastClient = new VAST.VASTClient();
+		var vastParser = new VAST.VASTParser();
 		var vastTracker;
 
-		if (!player.ads) return;
+		if(!player.ads) return;
 		player.ads(options);
 
-		if (options.midroll)
+		if(options.midroll)
 		{
-			for (var m = 0; m < options.midroll.length; m++)
+			for(var m = 0; m < options.midroll.length; m++)
 			{
 				playedMidrolls[options.midroll[m].time] = false;
 			}
 
-			player.on("contentloadedmetadata", function () {
+			player.on("contentloadedmetadata", function() {
 				debugLog("Ready");
-				for(var m = 0; m < options.midroll.length; m++)
-				{
-					if(options.markers && !markers.includes(options.midroll[m].time))
-					{
-						markers.push(options.midroll[m].time);
-
-						var newMarker = document.createElement("div");
-						newMarker.className = "vjs-midroll-marker";
-						newMarker.style.left = options.midroll[m].time / player.duration() * 100 + "%";
-						player.el().querySelector('.vjs-progress-holder').appendChild(newMarker);
-					}
-				}
+				addMarkers();
 			});
 
-			player.on('timeupdate', function (event)
+			player.on("timeupdate", function(event)
 			{
-				if (player.ads.isInAdMode()) return;
+				if(player.ads.isInAdMode()) return;
 
 				var opportunity;
 
@@ -73,7 +64,7 @@
 
 				for(var m = 0; m < options.midroll.length; m++)
 				{
-					if (player.currentTime() > options.midroll[m].time) closestMidroll = options.midroll[m].time;
+					if(player.currentTime() > options.midroll[m].time) closestMidroll = options.midroll[m].time;
 				}
 
 				if(playedMidrolls[closestMidroll]) return;
@@ -88,63 +79,94 @@
 			});
 		}
 
-		player.on('contentchanged', function ()
+		player.on("contentchanged", function()
 		{
-			player.trigger('adsready');
+			player.trigger("adsready");
 		});
 
-		player.on('readyforpreroll', function ()
+		player.on("readyforpreroll", function()
 		{
-			if (options.preroll) prepareAds("preroll");
-			else player.trigger("nopreroll");
+			if(options.preroll)
+			{
+				player.currentTime(0);
+				prepareAds("preroll");
+			}
+			else
+			{
+				player.trigger("nopreroll");
+				player.one("loadedmetadata",addMarkers);
+			}
 		});
 
-		player.on('readyforpostroll', function ()
+		player.on("readyforpostroll", function()
 		{
-			if (options.postroll) prepareAds("postroll");
+			if(options.postroll) prepareAds("postroll");
 			else player.trigger("nopostroll");
 		});
 
-		player.trigger('adsready');
+		player.trigger("adsready");
+		
+		function addMarkers()
+		{
+			for(var m = 0; m < options.midroll.length; m++)
+			{
+				if(options.markers && !markers.includes(options.midroll[m].time))
+				{
+					markers.push(options.midroll[m].time);
+
+					var newMarker = document.createElement("div");
+					newMarker.className = "vjs-midroll-marker";
+					newMarker.style.left = options.midroll[m].time / player.duration() * 100 + "%";
+					player.el().querySelector(".vjs-progress-holder").appendChild(newMarker);
+				}
+			}
+		}
 
 		function initTracker(ad, creative) {
-			vastTracker = new DMVAST.tracker(ad, creative);
+			vastTracker = new VAST.VASTTracker(vastClient, ad, creative);
 			if(options.skipDelay) vastTracker.setSkipDelay(options.skipDelay);
-			vastTracker.load();
+			vastTracker.trackImpression();
 
-			vpaidContainer.addEventListener('click', trackerClick);
+			vpaidContainer.addEventListener("click", trackerClick);
 			
 			skipButton.addEventListener("click", skipAd);
 
-			vastTracker.on('clickthrough', clickThrough);
+			vastTracker.on("clickthrough", clickThrough);
 			
-			player.on('adtimeupdate', trackProgress);
-			player.on('advolumechange', trackerVolumeChange);
-			player.on('adpause', trackerPause);
-			player.on('adplay', trackerPlay);
-			player.on('fullscreenchange', trackerFullscreenCheck);
+			player.on("adtimeupdate", trackProgress);
+			player.on("advolumechange", trackerVolumeChange);
+			player.on("adpause", trackerPause);
+			player.on("adplay", trackerPlay);
+			player.on("fullscreenchange", trackerFullscreenCheck);
+			window.addEventListener("beforeunload",fireClose);
 			
 			player.one("adended",function()
 			{
 				vastTracker.complete();
 				vastTracker = null;
 				skipButton.removeEventListener("click", skipAd);
-				vpaidContainer.removeEventListener('click', trackerClick);
-				player.off('adtimeupdate', trackProgress);
-				player.off('advolumechange', trackerVolumeChange);
-				player.off('adpause', trackerPause);
-				player.off('adplay', trackerPlay);
-				player.off('fullscreenchange', trackerFullscreenCheck);
+				vpaidContainer.removeEventListener("click", trackerClick);
+				player.off("adtimeupdate", trackProgress);
+				player.off("advolumechange", trackerVolumeChange);
+				player.off("adpause", trackerPause);
+				player.off("adplay", trackerPlay);
+				player.off("fullscreenchange", trackerFullscreenCheck);
+				window.removeEventListener("beforeunload",fireClose);
 			})
 			
 			function trackProgress()
 			{
 				vastTracker.setProgress(player.currentTime());
-				
-				if(vastTracker.skipable && skipButton.style.display == "none")
+								
+				if(vastTracker.skippable && skipButton.style.display == "none")
 				{
 					skipButton.style.display = "";
 				}
+			}
+			
+			function fireClose()
+			{
+				vastTracker.close();
 			}
 			
 			function trackerVolumeChange()
@@ -189,120 +211,116 @@
 			var podIndex = 0;
 
 			var pod = options[type];
-			if (type == "midroll") pod = pod.filter(group => group.time == closestMidroll);
+			if(type == "midroll") pod = pod.filter(group => group.time == closestMidroll);
 			pod = pod.map(group => group.ads);
 
 			player.ads.startLinearAdMode();
 			playAd();
 
 			function playAd() {
-				player.one('adended', endOfGroup);
-				player.one('aderror', nextAd);
+				player.one("adended", endOfGroup);
+				player.one("aderror", nextAd);
 
 				var currentAd = pod[podIndex][waterfallIndex];
 
 				debugLog("Attempting", currentAd);
 
-				DMVAST.parser.parse(currentAd, function (response, error)
+				vastClient.get(currentAd).then(function(response)
 				{
-					if(error)
-					{
-						console.error(error);
-						player.trigger("aderror");
-					}
-					else
-					{
-						var ads = response.ads;
+					var ads = response.ads;
 
-						for(var a = 0; a < ads.length; a++)
+					for(var a = 0; a < ads.length; a++)
+					{
+						for(var c = 0; c < ads[a].creatives.length; c++)
 						{
-							for(var c = 0; c < ads[a].creatives.length; c++)
-							{
-								var creative = ads[a].creatives[c];
+							var creative = ads[a].creatives[c];
 
-								var alternateFiles = false;
+							var alternateFiles = false;
 
-								switch (creative.type) {
-									case 'linear':
-										var adSource = [];
-										for(var m = 0; m < creative.mediaFiles.length; m++)
+							switch(creative.type) {
+								case "linear":
+									var adSource = [];
+									for(var m = 0; m < creative.mediaFiles.length; m++)
+									{
+										var mediaFile = creative.mediaFiles[m];
+
+										if(mediaFile.apiFramework)
 										{
-											var mediaFile = creative.mediaFiles[m];
-
-											if(mediaFile.apiFramework)
+											if(mediaFile.apiFramework == "VPAID")
 											{
-												if(mediaFile.apiFramework == "VPAID")
+												if(mediaFile.mimeType == "application/x-shockwave-flash")
 												{
-													if(mediaFile.mimeType == "application/x-shockwave-flash")
-													{
-														debugLog("Playing", currentAd);
-														loadFlashAdUnit(creative);
-														alternateFiles = true;
-														break;
-													}
-													else if(mediaFile.mimeType == "video/mp4")
-													{
-														adSource.push({
-															type: mediaFile.mimeType,
-															src: mediaFile.fileURL
-														});
-														continue;
-													}
-													else if(mediaFile.mimeType == "application/javascript")
-													{
-														debugLog("Playing", currentAd);
-														loadJSAdUnit(creative);
-														alternateFiles = true;
-														break;
-													}
-													else
-													{
-														console.warn(mediaFile.mimeType,"is not supported yet");
-														console.log(mediaFile);
-														continue;
-													}
+													debugLog("Playing", currentAd);
+													loadFlashAdUnit(creative);
+													alternateFiles = true;
+													break;
+												}
+												else if(mediaFile.mimeType == "video/mp4")
+												{
+													adSource.push({
+														type: mediaFile.mimeType,
+														src: mediaFile.fileURL
+													});
+													continue;
+												}
+												else if(mediaFile.mimeType == "application/javascript")
+												{
+													debugLog("Playing", currentAd);
+													loadJSAdUnit(creative);
+													alternateFiles = true;
+													break;
 												}
 												else
 												{
-													console.warn("No support for", mediaFile.apiFramework, "yet");
+													console.warn(mediaFile.mimeType,"is not supported yet");
 													console.log(mediaFile);
 													continue;
 												}
 											}
-
-											adSource.push({
-												type: mediaFile.mimeType,
-												src: mediaFile.fileURL
-											});
-										}
-
-										if(!alternateFiles)
-										{
-											if (adSource.length > 0)
-											{
-												debugLog("Playing", currentAd);
-												player.src(adSource);
-												player.trigger('ads-ad-started');
-												initTracker(ads[a], creative);
-											}
 											else
 											{
-												console.error("No possible sources for this creative", creative);
-												player.trigger("aderror");
+												console.warn("No support for", mediaFile.apiFramework, "yet");
+												console.log(mediaFile);
+												continue;
 											}
 										}
 
-										break;
-									case 'non-linear':
-									case 'companion':
-										break;
-									default:
-										console.warn("There's some type we don't know about:", creative.type);
-										break;
-								}
+										adSource.push({
+											type: mediaFile.mimeType,
+											src: mediaFile.fileURL
+										});
+									}
+
+									if(!alternateFiles)
+									{
+										if(adSource.length > 0)
+										{
+											debugLog("Playing", currentAd);
+											player.src(adSource);
+											player.trigger("ads-ad-started");
+											initTracker(ads[a], creative);
+										}
+										else
+										{
+											console.error("No possible sources for this creative", creative);
+											player.trigger("aderror");
+										}
+									}
+
+									break;
+								case "non-linear":
+								case "companion":
+									break;
+								default:
+									console.warn("There's some type we don't know about:", creative.type);
+									break;
 							}
 						}
 					}
+				}).catch(function(error)
+				{
+					console.error(error);
+					player.trigger("aderror");
 				});
 
 				function getPlayerDimensions()
@@ -340,17 +358,17 @@
 							return;
 						}
 
-						adUnit.subscribe('AdLoaded', onInit);
-						adUnit.subscribe('AdStarted', onStart);
-						adUnit.subscribe('AdStopped', wrapUp);
+						adUnit.subscribe("AdLoaded", onInit);
+						adUnit.subscribe("AdStarted", onStart);
+						adUnit.subscribe("AdStopped", wrapUp);
 
-						adUnit.handshakeVersion('2.0', onHandShake);
+						adUnit.handshakeVersion("2.0", onHandShake);
 
 						function onHandShake(error, result)
 						{
 							var initialDimensions = getPlayerDimensions();
 
-							adUnit.initAd(initialDimensions.width, initialDimensions.height, 'normal', -1, {AdParameters: creative.adParameters}, {});
+							adUnit.initAd(initialDimensions.width, initialDimensions.height, "normal", -1, {AdParameters: creative.adParameters}, {});
 						}
 
 						function onInit()
@@ -360,7 +378,7 @@
 
 						function onStart()
 						{
-							player.trigger('ads-ad-started');
+							player.trigger("ads-ad-started");
 							player.on("resize",resizeAd);
 							window.addEventListener("resize",resizeAd);
 						}
@@ -415,21 +433,21 @@
 							return;
 						}
 						
-						adUnit.handshakeVersion('2.0', initAd);
-						adUnit.on('AdLoaded', startAd);
+						adUnit.handshakeVersion("2.0", initAd);
+						adUnit.on("AdLoaded", startAd);
 
-						adUnit.on('AdStopped', function (err, result) {
+						adUnit.on("AdStopped", function(err, result) {
 							cleanUp();
 							player.trigger("adended");
 						});
 
-						adUnit.on('AdError', function (err, result) {
+						adUnit.on("AdError", function(err, result) {
 							console.error(err);
 							cleanUp();
 							player.trigger("aderror");
 						});
 
-						adUnit.on('AdStarted', function (err, result) {
+						adUnit.on("AdStarted", function(err, result) {
 							checkAdProperties();
 						});
 
@@ -437,8 +455,8 @@
 						{
 							var initialDimensions = getPlayerDimensions();
 
-							adUnit.initAd(initialDimensions.width, initialDimensions.height, 'normal', mediaFile.bitRate, {AdParameters: creative.adParameters}, '', function (err) {
-								player.trigger('ads-ad-started');
+							adUnit.initAd(initialDimensions.width, initialDimensions.height, "normal", mediaFile.bitRate, {AdParameters: creative.adParameters}, "", function(err) {
+								player.trigger("ads-ad-started");
 								player.on("resize",resizeAd);
 								window.addEventListener("resize",resizeAd);
 							});
@@ -472,14 +490,14 @@
 				}
 			}
 
-			player.one('adplaying', function (e)
+			player.one("adplaying", function(e)
 			{
-				player.trigger('ads-pod-started');
+				player.trigger("ads-pod-started");
 			});
 
 			function nextAd()
 			{
-				player.off('adended', endOfGroup);
+				player.off("adended", endOfGroup);
 				waterfallIndex++;
 				if(waterfallIndex < pod[podIndex].length) playAd();
 				else endOfGroup();
@@ -487,9 +505,9 @@
 
 			function endOfGroup()
 			{
-				player.off('adended', endOfGroup);
-				player.off('aderror', nextAd);
-				player.trigger('ads-ad-ended');
+				player.off("adended", endOfGroup);
+				player.off("aderror", nextAd);
+				player.trigger("ads-ad-ended");
 				//The pod has successfully played an ad. Let's move to the next one and reset the position
 				podIndex++;
 				waterfallIndex = 0;
@@ -502,7 +520,7 @@
 					{
 						playedMidrolls[closestMidroll] = true;
 					}
-					player.trigger('ads-pod-ended');
+					player.trigger("ads-pod-ended");
 					player.ads.endLinearAdMode();
 				}
 				else playAd();
@@ -515,7 +533,7 @@
 		}
 	};
 
-	registerPlugin('vastWaterfall', vastWaterfall);
+	registerPlugin("vastWaterfall", vastWaterfall);
 
 	return vastWaterfall;
 })(window.videojs)
